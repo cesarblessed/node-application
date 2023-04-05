@@ -12,7 +12,8 @@ const express = require('express');
 const app = express();
 const { engine } = require('express-handlebars');
 const bodyParser = require('body-parser');
-const Sequelize = require('sequelize');
+const Post = require('./models/Post');
+
 
 
 //Template engine handlebars
@@ -21,20 +22,24 @@ app.set('view engine', 'handlebars');
 // Body Parser
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-//Conexão com o banco de dados MySQL, Sequelize
-const sequelize = new Sequelize('teste', 'root', '123456', {
-    host: "localhost",
-    dialect: 'mysql'
-});
 
+app.get('/', (req, res) => {
+    res.render('home');
+});
 
 app.get('/cad', (req, res) => {
     res.render('formulario');
 });
 
 app.post('/add', (req, res) => {
-    req.body.titulo
-    res.send("Texto: " + req.body.titulo + "Conteudo: " + req.body.conteudo);
+    Post.create({
+        titulo: req.body.titulo,
+        conteudo: req.body.conteudo
+    }).then(() => {
+        res.redirect("/");
+    }).catch((erro) => {
+        res.send("Houve um erro: " + erro);
+    });
 });
 /*
 app.get('/', (req, res) => {
