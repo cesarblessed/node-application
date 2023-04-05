@@ -24,7 +24,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-    res.render('home');
+    Post.findAll({order: [['id', 'DESC']]}).then((posts) => {
+        res.render('home', {posts: posts});
+    });
 });
 
 app.get('/cad', (req, res) => {
@@ -41,6 +43,14 @@ app.post('/add', (req, res) => {
         res.send("Houve um erro: " + erro);
     });
 });
+
+app.get('/deletar/:id', (req, res) => {
+    Post.destroy({where: {'id':req.params.id}}).then(() => {
+        res.send("Postagem deletada com sucesso!");
+    }).catch((erro) => {
+        res.send("Esta postagem não existe!");
+    })
+});
 /*
 app.get('/', (req, res) => {
     res.sendFile(__dirname + "/html/index.html");
@@ -56,6 +66,6 @@ app.get('/ola/:cargo/:nome', (req, res) => {
 })
 */
 
-app.listen(8081, () => {
+app.listen(5020, () => {
     console.log('Servidor rodando!');
 });
